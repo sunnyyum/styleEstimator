@@ -1,12 +1,5 @@
 import torch.nn as nn
 
-def conv3d(in_channels, out_channels, kernel_size, stride):
-    '''
-    convolution for mlpConv
-    :return:neural network for convolution
-    '''
-    return nn.Conv3d(in_channels, out_channels, kernel_size, stride)
-
 class mlpConv(nn.Module):
     '''
     mlpConv net: conv(n*n*n) --> relu --> conv(1*1*1) --> relu --> conv(1*1*1)
