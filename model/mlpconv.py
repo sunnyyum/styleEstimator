@@ -37,9 +37,9 @@ class mlpConv(nn.Module):
 
         #fully connected layer
         #fc --> relu --> fc --> relu --> fc
-        #Input: (512@(2*2*2))*2=4096*2, Output: 256
+        #Input: (512@(2*2*2))=4096, Output: 256
         self.fc = nn.Sequential(
-            nn.Linear(512*2*2*2*2, 256),
+            nn.Linear(512*2*2*2, 256),
             nn.ReLU(),
             nn.Linear(256, 256),
             nn.ReLU(),
@@ -55,16 +55,17 @@ class mlpConv(nn.Module):
         return out
 
     #concatenate features and feed to fully conncected layers
-    def forward(self,x1, x2):
-        output1 = self.forward_once(x1)
-        output2 = self.forward_once(x2)
+    def forward(self, positive, negative):
+        output_positive = self.forward_once(positive)
+        output_negative = self.forward_once(negative)
 
-        out1 = output1.view(output1.size()[0], -1)
-        out2 = output2.view(output2.size()[0], -1)
+        out_p = output_positive.view(output_positive.size()[0], -1)
+        out_n = output_negative.view(output_negative.size()[0], -1)
 
-        out = self.fc(out1+out2)
+        out_fc_p = self.fc(out_p)
+        out_fc_n = self.fc(out_n)
 
-        return out
+        return out_fc_p, out_fc_n
 
 
 
