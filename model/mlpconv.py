@@ -1,5 +1,5 @@
 import torch.nn as nn
-import torch.nn.functional as F
+
 
 class mlpConv(nn.Module):
     '''
@@ -56,17 +56,21 @@ class mlpConv(nn.Module):
         return out
 
     #concatenate features and feed to fully conncected layers
-    def forward(self, positive, negative):
+    def forward(self, anchor, positive, negative):
+
+        output_anchor = self.forward_once(anchor)
         output_positive = self.forward_once(positive)
         output_negative = self.forward_once(negative)
 
+        out_a = output_anchor.view(output_anchor.size()[0],-1)
         out_p = output_positive.view(output_positive.size()[0], -1)
         out_n = output_negative.view(output_negative.size()[0], -1)
 
+        out_fc_a = self.fc(out_a)
         out_fc_p = self.fc(out_p)
         out_fc_n = self.fc(out_n)
 
-        return out_fc_p, out_fc_n
+        return out_fc_a, out_fc_p, out_fc_n
 
 
 
