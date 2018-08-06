@@ -1,5 +1,7 @@
 import torch
-import torch.utils.data as Data
+import torch.nn as nn
+from torch.utils.data import TensorDataset, DataLoader
+from torch.autograd import Variable
 
 import numpy as np
 
@@ -12,6 +14,7 @@ def train(train_loader, model, criterion, optimizer, cuda):
     loss = []
     total_loss = 0
 
+    model.train()
 
     for i,(input,target) in enumerate(train_loader):
         if cuda:
@@ -23,6 +26,8 @@ def train(train_loader, model, criterion, optimizer, cuda):
         output_positive, output_negative = model(input_positive, input_negative)
 
         loss_output = criterion(target, output_positive, output_negative)
+
+        optimizer.zero_grad()
         loss_output.backward()
         optimizer.step()
 
@@ -36,29 +41,64 @@ def train(train_loader, model, criterion, optimizer, cuda):
 
 #hyper paramerters
 lr = 0.001
+num_epoch = 10
 
 #device setup
-device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+cuda = torch.cuda.is_available()
+device = torch.device("cuda:0" if cuda else "cpu")
 
 #test value
-# Create random Tensors to hold inputs and outputs
-input_positive = torch.randn(30,30,30, device=device)
-output_positive = 1
+# Create random Tensors to hold inputs, outputs, target
+# input_positive = np.random.rand(30, 30 ,30)
+# input_negative = np.random.rand(30, 30 ,30)
+input_positive = torch.randn(1,1,30,30,30, device=device)
+input_negative = torch.randn(1,1,30,30,30, device=device)
 
-input_negative = torch.randn(30,30,30, device=device)
-output_negative = 2
+# output_positive = np.array([1])
+# output_negative = np.array([2])
+target = torch.tensor([1], device=device)
 
 num_classes = 3
 
 #put to dataloader
-train_loader_positive = Data.DataLoader(dataset=input_positive)
+# dataset = TensorDataset(input_positive, input_negative)
+# train_loader_positive = DataLoader(, batch_size=1)
 
 #set up model
-model = mlpconv(in_channels=1,n_classes=num_classes)
-criterion = triplet(margin=0.01)
+model = mlpconv.mlpConv(in_channels=1,n_classes=num_classes)
+criterion = triplet.TripletLoss()
 
 #set up optimizer
-optimizer = torch.optim.Adam(model.parameter(), lr=lr)
+optimizer = torch.optim.Adam(model.parameters(), lr=lr)
+
+print("Training..")
+
+for num_epoch in range(0, num_epoch):
+    # it should be changed with train funciton
+    loss = []
+    total_loss = 0
+
+    model.train()
+
+    for i in range(10):
+
+
+        optimizer.zero_grad()
+        output_positive, output_negative = model(input_positive, input_negative)
+
+        loss_output = criterion(Variable(target.float()), Variable(output_positive.float()), Variable(output_negative.float()))
+        loss_output = Variable(loss_output, requires_grad=True)
+        # loss_output = criterion(target, output_positive, output_negative)
+        optimizer.zero_grad()
+        loss_output.backward()
+        optimizer.step()
+
+        total_loss += loss_output
+        print("epoch: {}\n loss: {}\n".format(i, loss_output))
+        loss.append(loss_output)
+
+print("End\n")
+
 
 
 
