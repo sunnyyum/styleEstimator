@@ -73,7 +73,7 @@ optimizer = torch.optim.Adam(model.parameters(), lr=lr)
 
 print("Training..")
 
-for num_epoch in range(0, num_epoch):
+for epoch in range(0, num_epoch):
     # it should be changed with train funciton
     loss = []
     total_loss = 0
@@ -94,7 +94,7 @@ for num_epoch in range(0, num_epoch):
         optimizer.step()
 
         total_loss += loss_output
-        print("epoch: {}\n loss: {}\n".format(i, loss_output))
+        print("epoch: {}\n loss: {}\n".format(epoch, loss_output))
         loss.append(loss_output)
 
 print("End\n")
