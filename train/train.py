@@ -7,35 +7,6 @@ from model import triplet
 from supplementary import dataset
 
 
-def train(train_loader, model, criterion, optimizer, cuda):
-
-    loss = []
-    total_loss = 0
-
-    model.train()
-
-    for i,(input,target) in enumerate(train_loader):
-        if cuda:
-            input, target = input.cuda(), target.cuda()
-
-        input_positive, input_negative = input
-
-        optimizer.zero_grad()
-        output_positive, output_negative = model(input_positive, input_negative)
-
-        loss_output = criterion(target, output_positive, output_negative)
-
-        optimizer.zero_grad()
-        loss_output.backward()
-        optimizer.step()
-
-        total_loss += loss_output
-        if i % 100 == 0:
-            print("epoch: {}\n loss: {}\n".format(i,loss_output))
-            loss.append(loss_output)
-
-    total_loss /= (i+1)
-    return total_loss
 
 #hyper paramerters
 lr = 0.001
@@ -67,11 +38,13 @@ optimizer = torch.optim.Adam(model.parameters(), lr=lr)
 
 print("Training..\n")
 
-for epoch in range(0, num_epoch):
-    # it should be changed with train funciton
-    loss = []
-    total_loss = 0
+#parameters for total loss value
+total_loss = 0
+num_sample = len(style_train_loader)
 
+#start training
+for epoch in range(0, num_epoch):
+    loss = []
     model.train()
 
     for i, (input_anchor, input_positive, input_negative) in enumerate(style_train_loader):
@@ -89,12 +62,17 @@ for epoch in range(0, num_epoch):
         loss_output.backward()
         optimizer.step()
 
-        total_loss += loss_output
+        total_loss += loss_output.item()
         if i % 100 == 0:
             print("epoch: {}\nloss: {:0.2f}\n".format(epoch, loss_output))
             loss.append(loss_output.item())
 
 print("End\n")
+
+total_loss /= num_sample
+print("total loss: {:0.2f}\n".format(total_loss))
+
+
 
 
 
