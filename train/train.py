@@ -1,9 +1,6 @@
 import torch
-import torch.nn as nn
-from torch.utils.data import Dataset, DataLoader
 from torch.autograd import Variable
-
-import numpy as np
+from torch.utils.data import Dataset, DataLoader
 
 from model import mlpconv
 from model import triplet
@@ -43,6 +40,7 @@ def train(train_loader, model, criterion, optimizer, cuda):
 #hyper paramerters
 lr = 0.001
 num_epoch = 10
+num_classes = 3
 
 #device setup
 cuda = torch.cuda.is_available()
@@ -50,13 +48,9 @@ device = torch.device("cuda:0" if cuda else "cpu")
 
 #test value
 # Create random Tensors to hold inputs, outputs, target
-input_anchor = torch.randn(1,1,30,30,30, device=device)
-input_positive = torch.randn(1,1,30,30,30, device=device)
-input_negative = torch.randn(1,1,30,30,30, device=device)
-
-
-
-num_classes = 3
+# input_anchor = torch.randn(1,1,30,30,30, device=device)
+# input_positive = torch.randn(1,1,30,30,30, device=device)
+# input_negative = torch.randn(1,1,30,30,30, device=device)
 
 #put to dataloader
 #this part needs to add with 3d Data
@@ -71,7 +65,7 @@ criterion = triplet.TripletLoss()
 #set up optimizer
 optimizer = torch.optim.Adam(model.parameters(), lr=lr)
 
-print("Training..")
+print("Training..\n")
 
 for epoch in range(0, num_epoch):
     # it should be changed with train funciton
@@ -97,8 +91,8 @@ for epoch in range(0, num_epoch):
 
         total_loss += loss_output
         if i % 100 == 0:
-            print("epoch: {}\n loss: {}\n".format(epoch, loss_output))
-            loss.append(loss_output)
+            print("epoch: {}\nloss: {:0.2f}\n".format(epoch, loss_output))
+            loss.append(loss_output.item())
 
 print("End\n")
 
