@@ -22,9 +22,8 @@ class StyleEstimatorDataset(Dataset):
         return out_mesh
 
 
-    def __init__(self, dataset, transform=None):
+    def __init__(self, dataset):
         self.dataset = dataset
-        self.transform = transform
 
         self.labels = self.dataset.labels
         self.data = self.dataset.data
@@ -44,14 +43,10 @@ class StyleEstimatorDataset(Dataset):
         sample_positive = self.data[positive_index]
         sample_negative = self.data[negative_index]
 
-        sample_anchor = self.convert_mesh_to_voxel(sample_anchor)
-        sample_positive = self.convert_mesh_to_voxel(sample_positive)
-        sample_negative = self.convert_mesh_to_voxel(sample_negative)
+        sample_anchor = self.convert_mesh_to_voxel(sample_anchor, cell_size=30)
+        sample_positive = self.convert_mesh_to_voxel(sample_positive, cell_size=30)
+        sample_negative = self.convert_mesh_to_voxel(sample_negative, cell_size=30)
 
-        if self.transform is not None:
-            sample_anchor = self.transform(sample_anchor)
-            sample_positive = self.transform(sample_positive)
-            sample_negative = self.transform(sample_negative)
 
         return (sample_anchor, sample_positive, sample_negative), []
 
