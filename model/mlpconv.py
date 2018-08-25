@@ -47,7 +47,7 @@ class mlpConv(nn.Module):
             nn.Linear(256, n_classes),
         )
 
-    #forward for positive and negative examples
+    #forward for examples
     def forward_once(self, x):
         out = self.conv1(x)
         out = self.conv2(out)

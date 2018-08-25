@@ -43,6 +43,8 @@ class StyleEstimatorDataset(Dataset):
         sample_positive = self.data[positive_index]
         sample_negative = self.data[negative_index]
 
+        # convert mesh into point
+        # sample_anchor, sample_positive, sample_negative is file such as .obj
         sample_anchor = self.convert_mesh_to_voxel(sample_anchor, cell_size=30)
         sample_positive = self.convert_mesh_to_voxel(sample_positive, cell_size=30)
         sample_negative = self.convert_mesh_to_voxel(sample_negative, cell_size=30)
