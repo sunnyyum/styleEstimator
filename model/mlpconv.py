@@ -36,17 +36,6 @@ class mlpConv(nn.Module):
             nn.Conv3d(in_channels=512, out_channels=512, kernel_size=1, stride=1), #output shape(512,2,2,2)
         )
 
-        #fully connected layer
-        #fc --> relu --> fc --> relu --> fc
-        #Input: (512@(2*2*2))=4096, Output: 256
-        self.fc = nn.Sequential(
-            nn.Linear(512*2*2*2, 256),
-            nn.ReLU(),
-            nn.Linear(256, 256),
-            nn.ReLU(),
-            nn.Linear(256, n_classes),
-        )
-
     #forward for examples
     def forward_once(self, x):
         out = self.conv1(x)
@@ -66,11 +55,7 @@ class mlpConv(nn.Module):
         out_p = output_positive.view(output_positive.size()[0], -1)
         out_n = output_negative.view(output_negative.size()[0], -1)
 
-        out_fc_a = self.fc(out_a)
-        out_fc_p = self.fc(out_p)
-        out_fc_n = self.fc(out_n)
-
-        return out_fc_a, out_fc_p, out_fc_n
+        return out_a, out_p, out_n
 
 
 
