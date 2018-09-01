@@ -46,19 +46,6 @@ class pointNet(nn.Module):
             nn.ReLU()
         )
 
-        #fc(256, 256) --> drop out: 0.7 --> fc(# of classes)
-        #Input: (1@1024) = 1024, Output: # of classes
-        self.classifier = nn.Sequential(
-            nn.Linear(1024, 512),
-            nn.BatchNorm1d(512),
-            nn.ReLU(),
-            nn.Dropout(0.7),
-            nn.Linear(512, 256),
-            nn.BatchNorm1d(256),
-            nn.ReLU(),
-            nn.Dropout(0.7),
-            nn.Linear(256, num_classes)
-        )
 
     # forward for examples
     def forward_once(self, x):
@@ -97,9 +84,5 @@ class pointNet(nn.Module):
         output_anchor, _, T2A = self.forward_once(anchor)
         output_positive, _, T2P = self.forward_once(positive)
         output_negative, _, T2N = self.forward_once(negative)
-
-        # out_a = self.classifier(output_anchor)
-        # out_p = self.classifier(output_positive)
-        # out_n = self.classifier(output_negative)
 
         return output_anchor, output_positive, output_negative
