@@ -98,8 +98,8 @@ class pointNet(nn.Module):
         output_positive, _, T2P = self.forward_once(positive)
         output_negative, _, T2N = self.forward_once(negative)
 
-        out_a = self.classifier(output_anchor)
-        out_p = self.classifier(output_positive)
-        out_n = self.classifier(output_negative)
+        # out_a = self.classifier(output_anchor)
+        # out_p = self.classifier(output_positive)
+        # out_n = self.classifier(output_negative)
 
-        return out_a, out_p, out_n
+        return output_anchor, output_positive, output_negative
